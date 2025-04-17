@@ -468,7 +468,7 @@ export default function PokemonDetail() {
                   {evolutionChain && (
                     <div className="grid grid-cols-1 gap-8">
                       {Object.keys(evolutionPokemonDetails).length > 0 && (
-                        <div className="flex flex-wrap justify-around items-center gap-4">
+                        <div className="flex flex-col items-center">
                           {getFlatEvolutionChain(evolutionChain.chain).map(
                             (evolution, index, array) => {
                               const pokemonDetail =
@@ -484,7 +484,7 @@ export default function PokemonDetail() {
                               return (
                                 <div
                                   key={evolution.name}
-                                  className="flex flex-col items-center"
+                                  className="flex flex-col items-center w-full"
                                 >
                                   <Link
                                     to={`/pokemon/${pokemonDetail.id}`}
@@ -509,32 +509,31 @@ export default function PokemonDetail() {
                                     </span>
                                   </div>
 
-                                  {/* Evolution details - arrow and conditions */}
-                                  {index < array.length - 1 &&
-                                    evolution.level ===
-                                      array[index + 1].level - 1 && (
-                                      <div className="flex flex-col items-center my-2">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          className="h-6 w-6 text-gray-400"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                                          />
-                                        </svg>
+                                  {/* Arrow and evolution conditions */}
+                                  {index < array.length - 1 && (
+                                    <div className="flex flex-col items-center my-4">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-6 w-6 text-gray-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                                        />
+                                      </svg>
+                                      <div className="text-center mt-1">
                                         {array[index + 1].minLevel && (
-                                          <span className="text-xs text-gray-500 mt-1">
+                                          <span className="text-xs text-gray-500 block">
                                             Level {array[index + 1].minLevel}
                                           </span>
                                         )}
                                         {array[index + 1].item && (
-                                          <span className="text-xs text-gray-500 mt-1 capitalize">
+                                          <span className="text-xs text-gray-500 block capitalize">
                                             {array[index + 1].item.replace(
                                               /-/g,
                                               " "
@@ -546,7 +545,7 @@ export default function PokemonDetail() {
                                             "level-up" &&
                                           !array[index + 1].minLevel &&
                                           !array[index + 1].item && (
-                                            <span className="text-xs text-gray-500 mt-1 capitalize">
+                                            <span className="text-xs text-gray-500 block capitalize">
                                               {array[index + 1].trigger.replace(
                                                 /-/g,
                                                 " "
@@ -554,7 +553,8 @@ export default function PokemonDetail() {
                                             </span>
                                           )}
                                       </div>
-                                    )}
+                                    </div>
+                                  )}
                                 </div>
                               );
                             }
@@ -586,35 +586,72 @@ export default function PokemonDetail() {
                     Menampilkan {Object.keys(moveDetails).length} dari{" "}
                     {pokemon.moves.length} gerakan
                   </div>
-                  <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-500 border-b pb-2">
+
+                  {/* Header untuk tampilan desktop */}
+                  <div className="hidden md:grid md:grid-cols-12 gap-2 text-sm font-medium text-gray-500 border-b pb-2">
                     <div className="col-span-4">Nama</div>
                     <div className="col-span-2">Tipe</div>
                     <div className="col-span-2">Power</div>
                     <div className="col-span-2">Akurasi</div>
                     <div className="col-span-2">PP</div>
                   </div>
+
+                  {/* Cards untuk tampilan mobile dan desktop */}
                   {Object.values(moveDetails).map((move) => {
                     const typeColor = TYPE_COLORS[move.type] || "bg-gray-200";
                     return (
-                      <div
-                        key={move.name}
-                        className="grid grid-cols-12 gap-2 py-2 border-b text-sm"
-                      >
-                        <div className="col-span-4 font-medium capitalize">
-                          {move.name.replace("-", " ")}
+                      <div key={move.name} className="py-3 border-b">
+                        {/* Tampilan desktop */}
+                        <div className="hidden md:grid md:grid-cols-12 gap-2 text-sm">
+                          <div className="col-span-4 font-medium capitalize">
+                            {move.name.replace(/-/g, " ")}
+                          </div>
+                          <div className="col-span-2">
+                            <span
+                              className={`${typeColor} text-white px-2 py-1 rounded-full text-xs capitalize`}
+                            >
+                              {move.type}
+                            </span>
+                          </div>
+                          <div className="col-span-2">{move.power || "-"}</div>
+                          <div className="col-span-2">
+                            {move.accuracy ? `${move.accuracy}%` : "-"}
+                          </div>
+                          <div className="col-span-2">{move.pp}</div>
                         </div>
-                        <div className="col-span-2">
-                          <span
-                            className={`${typeColor} text-white px-2 py-1 rounded-full text-xs capitalize`}
-                          >
-                            {move.type}
-                          </span>
+
+                        {/* Tampilan mobile */}
+                        <div className="md:hidden">
+                          <div className="font-medium capitalize text-base mb-1.5">
+                            {move.name.replace(/-/g, " ")}
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center">
+                              <span className="text-gray-500 w-16">Tipe:</span>
+                              <span
+                                className={`${typeColor} text-white px-2 py-1 rounded-full text-xs capitalize`}
+                              >
+                                {move.type}
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-gray-500 w-16">Power:</span>
+                              <span>{move.power || "-"}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-gray-500 w-16">
+                                Akurasi:
+                              </span>
+                              <span>
+                                {move.accuracy ? `${move.accuracy}%` : "-"}
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-gray-500 w-16">PP:</span>
+                              <span>{move.pp}</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="col-span-2">{move.power || "-"}</div>
-                        <div className="col-span-2">
-                          {move.accuracy ? `${move.accuracy}%` : "-"}
-                        </div>
-                        <div className="col-span-2">{move.pp}</div>
                       </div>
                     );
                   })}
